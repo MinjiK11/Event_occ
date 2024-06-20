@@ -166,7 +166,8 @@ data = dict(
        temporal = _temporal_,
        labels_tag = _labels_tag_,
        query_tag = _query_tag_,
-       norm_e=True),
+       norm_e=True,
+       stats_init=False),
    val=dict(
        type=dataset_type,
        split = "val",
@@ -179,7 +180,8 @@ data = dict(
        temporal = _temporal_,
        labels_tag = _labels_tag_,
        query_tag = _query_tag_,
-       norm_e=True),
+       norm_e=True,
+       stats_init=False),
    test=dict(
        type=dataset_type,
        split = "val",
@@ -192,7 +194,8 @@ data = dict(
        temporal = _temporal_,
        labels_tag = _labels_tag_,
        query_tag = _query_tag_,
-       norm_e=True),
+       norm_e=True,
+       stats_init=False),
    shuffler_sampler=dict(type='DistributedGroupSampler'),
    nonshuffler_sampler=dict(type='DistributedSampler')
 )

@@ -36,6 +36,7 @@ class SemanticKittiDatasetStage2(Dataset):
         query_tag = 'query_iou5203_pre7712_rec6153',
         color_jitter=None,
         norm_e=True,
+        stats_init=False
     ):
         super().__init__()
         
@@ -88,6 +89,8 @@ class SemanticKittiDatasetStage2(Dataset):
         self.test_mode = test_mode
         self.norm_e=norm_e
         self.input_type="event"
+        self.iter=0
+        self.stats_init=stats_init
         self.set_group_flag()
         
 
@@ -96,6 +99,7 @@ class SemanticKittiDatasetStage2(Dataset):
         return self.prepare_data(index)
 
     def __len__(self):
+        self.iter=0
         return len(self.scans)
 
     @staticmethod
@@ -237,6 +241,7 @@ class SemanticKittiDatasetStage2(Dataset):
                               cpu_only=False, stack=True)
         queue[-1]['img_metas'] = DC(metas_map, cpu_only=True)
         queue = queue[-1]
+        self.iter+=1
         return queue
 
     def get_data_info(self, index):
@@ -362,6 +367,10 @@ class SemanticKittiDatasetStage2(Dataset):
             image_paths.append(rgb_path)
 
         proposal_bin = self.read_occupancy_SemKITTI(proposal_path)
+        if self.iter==0:
+            self.stats_init=True
+        else:
+            self.stats_init=False
 
         meta_dict = dict(
             sequence_id = sequence,
@@ -371,7 +380,8 @@ class SemanticKittiDatasetStage2(Dataset):
             lidar2img = lidar2img_rts,
             lidar2cam=lidar2cam_rts,
             cam_intrinsic=cam_intrinsics,
-            img_shape = [(self.img_H,self.img_W)]
+            img_shape = [(self.img_H,self.img_W)],
+            stats_init=self.stats_init
             # event_filename=event_paths
         )
 
